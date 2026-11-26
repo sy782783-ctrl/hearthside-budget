@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hearthside Budget — The Alvarez Household, November 2026</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">H</div>
+      <div>
+        <h1>Hearthside Budget</h1>
+        <p class="tagline">The Alvarez household · November 2026 · USD</p>
+      </div>
+    </div>
+    <p class="header-note">One calm place for the money coming in, going out, and being set aside.</p>
+  </div>
+  <nav class="main-nav" aria-label="Main views">
+    <a href="#dashboard" data-nav="dashboard">Dashboard</a>
+    <a href="#transactions" data-nav="transactions">Transactions</a>
+    <a href="#budgets" data-nav="budgets">Budgets</a>
+    <a href="#bills" data-nav="bills">Bills</a>
+    <a href="#goals" data-nav="goals">Goals</a>
+    <a href="#tools" data-nav="tools">Tools</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ DASHBOARD ============ -->
+  <section id="view-dashboard" class="view">
+    <div class="stat-grid">
+      <article class="stat-card balance">
+        <h2>Total balance</h2>
+        <p class="stat-value" id="stat-balance">—</p>
+        <p class="stat-sub" id="stat-balance-sub">—</p>
+      </article>
+      <article class="stat-card">
+        <h2>Income · November</h2>
+        <p class="stat-value income" id="stat-income">—</p>
+        <p class="stat-sub" id="stat-income-sub">—</p>
+      </article>
+      <article class="stat-card">
+        <h2>Expenses · November</h2>
+        <p class="stat-value expense" id="stat-expenses">—</p>
+        <p class="stat-sub" id="stat-expenses-sub">—</p>
+      </article>
+      <article class="stat-card">
+        <h2>Savings rate</h2>
+        <p class="stat-value" id="stat-rate">—</p>
+        <p class="stat-sub" id="stat-rate-sub">—</p>
+      </article>
+    </div>
+
+    <div class="dash-columns">
+      <article class="panel chart-panel">
+        <h2>Spending by category</h2>
+        <div id="category-chart" class="bar-chart"></div>
+      </article>
+      <div class="dash-side">
+        <article class="panel">
+          <h2>Recent transactions</h2>
+          <ul id="recent-list" class="mini-list"></ul>
+          <p class="panel-link"><a href="#transactions">See all transactions →</a></p>
+        </article>
+        <article class="panel">
+          <h2>Upcoming bills</h2>
+          <ul id="upcoming-list" class="mini-list"></ul>
+          <p class="panel-link"><a href="#bills">Manage bills →</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRANSACTIONS ============ -->
+  <section id="view-transactions" class="view">
+    <div class="view-head">
+      <h2>Transactions</h2>
+      <p class="view-sub" id="txn-summary">—</p>
+    </div>
+    <form id="txn-form" class="panel form-panel">
+      <h3>Add a transaction</h3>
+      <div class="form-grid">
+        <label>Date
+          <input type="date" id="txn-date" min="2026-11-01" max="2026-11-30" value="2026-11-26" required>
+        </label>
+        <label>Description
+          <input type="text" id="txn-desc" placeholder="e.g. Market Basket run" required>
+        </label>
+        <label>Category
+          <select id="txn-category"></select>
+        </label>
+        <label>Type
+          <select id="txn-type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </label>
+        <label>Amount ($)
+          <input type="number" id="txn-amount" min="0.01" step="0.01" placeholder="0.00" required>
+        </label>
+        <button type="submit" class="btn primary">Add transaction</button>
+      </div>
+    </form>
+    <div class="panel">
+      <div class="filter-row">
+        <label>Category
+          <select id="txn-filter-category">
+            <option value="all">All categories</option>
+          </select>
+        </label>
+        <label>Search
+          <input type="search" id="txn-search" placeholder="Search descriptions…">
+        </label>
+        <p class="filter-count" id="txn-count"></p>
+      </div>
+      <div class="table-wrap">
+        <table class="txn-table">
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Category</th><th class="num">Amount</th><th><span class="sr-only">Actions</span></th></tr>
+          </thead>
+          <tbody id="txn-body"></tbody>
+        </table>
+      </div>
+      <p class="empty-note" id="txn-empty" hidden>No transactions match. Try a different filter or search.</p>
+    </div>
+  </section>
+
+  <!-- ============ BUDGETS ============ -->
+  <section id="view-budgets" class="view">
+    <div class="view-head">
+      <h2>Budgets</h2>
+      <p class="view-sub" id="budget-summary">—</p>
+    </div>
+    <p class="hint">Budget amounts are editable — change a number and the bars, totals and warnings update right away. Bars turn amber at 80% and red once a category goes over budget.</p>
+    <div id="budget-list" class="budget-list"></div>
+  </section>
+
+  <!-- ============ BILLS ============ -->
+  <section id="view-bills" class="view">
+    <div class="view-head">
+      <h2>Bills &amp; subscriptions</h2>
+      <p class="view-sub" id="bill-summary">—</p>
+    </div>
+    <div class="stat-grid two">
+      <article class="stat-card">
+        <h2>Paid so far</h2>
+        <p class="stat-value income" id="bill-paid-total">—</p>
+        <p class="stat-sub" id="bill-paid-count">—</p>
+      </article>
+      <article class="stat-card">
+        <h2>Still to pay</h2>
+        <p class="stat-value expense" id="bill-due-total">—</p>
+        <p class="stat-sub" id="bill-due-count">—</p>
+      </article>
+    </div>
+    <div id="bill-list" class="bill-list"></div>
+  </section>
+
+  <!-- ============ GOALS ============ -->
+  <section id="view-goals" class="view">
+    <div class="view-head">
+      <h2>Savings goals</h2>
+      <p class="view-sub" id="goal-summary">—</p>
+    </div>
+    <div id="goal-list" class="goal-list"></div>
+  </section>
+
+  <!-- ============ TOOLS ============ -->
+  <section id="view-tools" class="view">
+    <div class="view-head">
+      <h2>Tools</h2>
+      <p class="view-sub">Two small calculators, pre-filled with this household's November figures. Everything updates as you type.</p>
+    </div>
+    <div class="tool-grid">
+      <article class="panel tool">
+        <h3>50 / 30 / 20 budget</h3>
+        <p class="tool-note">Split after-tax monthly income into needs (50%), wants (30%) and savings &amp; debt payoff (20%).</p>
+        <label>Monthly take-home income ($)
+          <input type="number" id="tool-503020-income" min="0" step="1" value="8710">
+        </label>
+        <div class="split-bars">
+          <div class="split-row">
+            <span class="split-label">Needs · 50%</span>
+            <div class="bar-track"><div class="bar-fill needs" id="bar-needs"></div></div>
+            <strong id="amt-needs">—</strong>
+          </div>
+          <div class="split-row">
+            <span class="split-label">Wants · 30%</span>
+            <div class="bar-track"><div class="bar-fill wants" id="bar-wants"></div></div>
+            <strong id="amt-wants">—</strong>
+          </div>
+          <div class="split-row">
+            <span class="split-label">Savings · 20%</span>
+            <div class="bar-track"><div class="bar-fill save" id="bar-save"></div></div>
+            <strong id="amt-save">—</strong>
+          </div>
+        </div>
+        <p class="tool-result" id="tool-503020-note"></p>
+      </article>
+
+      <article class="panel tool">
+        <h3>Emergency fund</h3>
+        <p class="tool-note">How big a cushion this household needs, and how long it takes to finish at a steady monthly contribution.</p>
+        <label>Monthly essential expenses ($)
+          <input type="number" id="tool-ef-expenses" min="0" step="1" value="5140">
+        </label>
+        <label>Months of cover
+          <input type="number" id="tool-ef-months" min="1" max="24" step="1" value="6">
+        </label>
+        <label>Already saved ($)
+          <input type="number" id="tool-ef-saved" min="0" step="1" value="12400">
+        </label>
+        <label>Monthly contribution ($)
+          <input type="number" id="tool-ef-monthly" min="0" step="1" value="600">
+        </label>
+        <div class="bar-track big"><div class="bar-fill save" id="bar-ef"></div></div>
+        <p class="tool-result" id="tool-ef-result"></p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Hearthside Budget · A static site — every figure on this page is computed in your browser from the transaction list. No accounts, no tracking, no network calls.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
